@@ -439,8 +439,13 @@ static zend_object_value php_hunspell_object_new(zend_class_entry *class_type TS
     hobj->dic_path_len = 0;
 
     zend_object_std_init(&hobj->zo, class_type TSRMLS_CC);
+
+    #if PHP_VERSION_ID < 50399
     zend_hash_copy(hobj->zo.properties, &class_type->default_properties, (copy_ctor_func_t) zval_add_ref,
 		    (void *) &tmp, sizeof(zval *));
+    #else
+            object_properties_init(&hobj->zo, class_type);
+    #endif
 
     retval.handle = zend_objects_store_put(hobj,
 					NULL,
